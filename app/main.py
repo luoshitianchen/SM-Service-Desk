@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 VERSION = "2.1.0"
 SERVICE_NAME = "sm-service-desk"
 DISPLAY_NAME = "SM Service Desk"
-DESCRIPTION = "企业智能客服与工单系统：自动分派、SLA、知识联动与工单闭环"
+DESCRIPTION = "IT 服务台与工单系统：工单、SLA、知识库与满意度"
 ENVIRONMENT = os.getenv("SM_ENV", "development").lower()
 ALLOWED_HOSTS = [h.strip() for h in os.getenv("SM_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",") if h.strip()]
 REQUESTS = {"total": 0, "errors": 0, "latency_ms_total": 0.0}
@@ -38,7 +38,7 @@ AUDIT_CENTER_URL = os.getenv("SM_AUDIT_CENTER_URL", "")
 INTEGRATION_DEPENDENCIES = ['sm-iam', 'sm-audit-log-center']
 INTEGRATION_EVENTS = ["health.checked", "resource.changed", "audit.recorded"]
 _db_conn: sqlite3.Connection | None = None
-_db_lock = threading.Lock()
+_db_lock = threading.RLock()
 
 
 def db() -> sqlite3.Connection:

@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from app import base
 
 SERVICE = "sm-service-desk"
-VERSION = "2.0.0"
+VERSION = "3.0.0"
 NAME = "SM Service Desk"
 DESCRIPTION = "服务台：工单、分类、分派、SLA 与闭环"
 PORT = 8370

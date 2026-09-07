@@ -104,7 +104,7 @@ def list_tickets(status_: str | None = None, priority: str | None = None, catego
         params.append(category)
     where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
     with base.db_ctx() as conn:
-        rows = conn.execute(f"SELECT * FROM tickets{where} ORDER BY CASE priority WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 ELSE 4 END, created_at DESC LIMIT 200", params).fetchall()
+        rows = conn.execute(f"SELECT * FROM tickets{where} ORDER BY CASE priority WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 ELSE 4 END, created_at DESC LIMIT 200", params).fetchall()  # nosec B608  # SQL片段为程序生成，用户输入已参数化
     return {"items": [dict(r) for r in rows], "total": len(rows)}
 
 

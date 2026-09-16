@@ -1,0 +1,46 @@
+groups:
+- name: sm-service-desk-alerts
+  rules:
+  - alert: SMServiceDeskServiceDown
+    expr: up{job="sm-service-desk"} == 0
+    for: 1m
+    labels:
+      severity: Critical
+      service: sm-service-desk
+    annotations:
+      summary: '{{ $labels.instance }} SM Service Desk 服务不可用'
+      description: SM Service Desk（sm-service-desk）的 up 指标已连续 1 分钟为 0，目标实例可能已宕机或无法被
+        Prometheus 抓取。
+  - alert: SMServiceDeskHighErrorRate
+    expr: sum(rate(sm_service_desk_http_requests_total{status=~"5.."}[5m])) / sum(rate(sm_service_desk_http_requests_total[5m]))
+      > 0.05
+    for: 5m
+    labels:
+      severity: Warning
+      service: sm-service-desk
+    annotations:
+      summary: SM Service Desk 5xx 错误率超过 5%
+      description: SM Service Desk（sm-service-desk）过去 5 分钟 5xx 响应占比 超过 5%（当前值 {{ $value
+        | humanizePercentage }}），请检查上游依赖与错误日志。
+  - alert: SMServiceDeskHighLatency
+    expr: (sum(rate(sm_service_desk_latency_ms_total[5m])) / sum(rate(sm_service_desk_requests_total[5m])))
+      > 1000
+    for: 5m
+    labels:
+      severity: Warning
+      service: sm-service-desk
+    annotations:
+      summary: SM Service Desk 请求平均延迟超过 1s
+      description: SM Service Desk（sm-service-desk）过去 5 分钟请求平均延迟 （rate(latency_ms_total)/rate(requests_total)）超过
+        1000ms（当前 {{ $value | humanize }} ms）。注：该服务未暴露延迟直方图，此处用平均延迟近似 p99 高延迟告警。
+  - alert: SMServiceDeskHighMemoryUsage
+    expr: sum(container_memory_working_set_bytes{pod=~"sm-service-desk-.*", container!="",
+      container!="POD"}) by (pod) > 536870912
+    for: 5m
+    labels:
+      severity: Warning
+      service: sm-service-desk
+    annotations:
+      summary: SM Service Desk 进程内存超过 512MB
+      description: '{{ $labels.pod }} 容器工作集内存超过 512MiB（当前 {{ $value | humanize1024
+        }B），SM Service Desk（sm-service-desk）存在内存泄漏或 OOM 风险，请排查。'

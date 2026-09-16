@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.core.database import init_db
 from app.core.logging import setup_logging
 from app.core.middleware import SecurityMiddleware
-from app.routers import crypto, health, items, meta, metrics
+from app.routers import crypto, desk_catalog, desk_slas, desk_tickets, health, items, meta, metrics
 
 setup_logging()
 
@@ -42,7 +42,9 @@ app.include_router(meta.router)
 app.include_router(crypto.router)
 app.include_router(items.router)
 app.include_router(metrics.router)
-
+app.include_router(desk_tickets.router)
+app.include_router(desk_catalog.router)
+app.include_router(desk_slas.router)
 
 
 @app.get("/", include_in_schema=False)
